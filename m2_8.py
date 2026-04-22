@@ -1,5 +1,5 @@
 import pygame, sys
-import vtest
+import v2_8
 from game_data.car_loader   import load_cars
 from game_data.track_loader import load_tracks
 
