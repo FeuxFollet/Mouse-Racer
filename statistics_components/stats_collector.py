@@ -1,32 +1,33 @@
 import csv
 import os
+from datetime import datetime
 
 
-# Paths ───────────────────────────────────────────────────────────────
-
-_HERE = os.path.dirname(os.path.abspath(__file__))
-_STATS_DIR = os.path.join(_HERE, "statistics")
+_STATS_DIR = os.path.join(os.getcwd(), "statistics")
 
 
 class StatsCollector:
 
     def __init__(self):
-        self._match_dir = _STATS_DIR
+        self._match_dir      = None
 
-        self._checkpoints = []   # (lap, checkpoint, race_time_ms, split_ms)
-        self._off_road    = []   # (start_ms, end_ms, duration_ms)
-        self._speed       = []   # (elapsed_s, speed_kmh)
+        # in-memory buffers
+        self._checkpoints    = []   # (lap, checkpoint, race_time_ms, split_ms)
+        self._off_road       = []   # (start_ms, end_ms, duration_ms)
+        self._speed          = []   # (elapsed_s, speed_kmh)
 
-        self._last_cp_time   = 0
-        self._off_road_start = None
+        self._last_cp_time   = 0    # ms – time of last gate / race start
+        self._off_road_start = None # ms – when the car left the road (None = on road)
 
-    # Public API ───────────────────────────────────────────────────────────────
+    # public API ────────────────────────────────────────────────────────────
 
     def reset(self, track_name: str = "track", car_name: str = "car"):
-        os.makedirs(_STATS_DIR, exist_ok=True)
-        self._match_dir = _STATS_DIR
+        ts         = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_track = "".join(c if c.isalnum() or c in "-_" else "_"
+                             for c in track_name).strip("_")
+        self._match_dir = os.path.join(_STATS_DIR, f"{ts}_{safe_track}")
+        os.makedirs(self._match_dir, exist_ok=True)
 
-        # clear buffers
         self._checkpoints    = []
         self._off_road       = []
         self._speed          = []
@@ -42,15 +43,18 @@ class StatsCollector:
         self._last_cp_time = race_time_ms
 
     def record_off_road_start(self, race_time_ms: int):
+        # Call when player leaves track
         self._off_road_start = race_time_ms
 
     def record_off_road_end(self, race_time_ms: int):
+        # Call when player re-enter track
         if self._off_road_start is not None:
             duration = race_time_ms - self._off_road_start
             self._off_road.append((self._off_road_start, race_time_ms, duration))
             self._off_road_start = None
 
     def record_speed(self, elapsed_s: float, speed_kmh: float):
+        # Call once per second
         self._speed.append((round(elapsed_s, 1), round(speed_kmh, 1)))
 
     def flush(self):
@@ -73,7 +77,7 @@ class StatsCollector:
             self._speed,
         )
 
-    # Private ───────────────────────────────────────────────────────────────
+    # private ───────────────────────────────────────────────────────────────
 
     def _write_csv(self, filename: str, headers: list, rows: list):
         path = os.path.join(self._match_dir, filename)
@@ -83,6 +87,5 @@ class StatsCollector:
             w.writerows(rows)
 
 
-# ───────────────────────────────────────────────────────────────
-
+# Singleton ─────────────────────────────────────────────────────────────────
 stats = StatsCollector()

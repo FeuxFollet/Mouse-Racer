@@ -2,6 +2,7 @@ import pygame, math, sys, os, importlib.util
 import game_components.shared as _s
 from game_components.ui      import Button, glow_text, draw_panel
 from game_components.drawing import draw_track_minimap
+import subprocess
 
 
 # ─── Screens ─────────────────────────────────────────────────────────────────
@@ -12,9 +13,13 @@ def screen_main(bg, lines):
     W = _s.W; H = _s.H; FPS = _s.FPS; C = _s.C
     F_GIANT = _s.F_GIANT; F_MED = _s.F_MED; F_SM = _s.F_SM
 
-    btn_play = Button("PLAY",      W//2, H//2 - 30,  w=300)
-    btn_quit = Button("QUIT",      W//2, H//2 + 50, w=300, color_key='cyan')
-    buttons  = [btn_play, btn_quit]
+    # ── Buttons (4 total now) ─────────────────────────────
+    btn_play  = Button("PLAY",        W//2, H//2 - 90, w=300)
+    btn_shop  = Button("SHOP",        W//2, H//2 - 20, w=300, color_key='gold')  # placeholder
+    btn_stats = Button("STATISTICS",  W//2, H//2 + 50, w=300, color_key='neon')
+    btn_quit  = Button("QUIT",        W//2, H//2 + 120, w=300, color_key='cyan')
+
+    buttons = [btn_play, btn_shop, btn_stats, btn_quit]
 
     title_bob = 0.0
 
@@ -23,9 +28,30 @@ def screen_main(bg, lines):
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 pygame.quit(); sys.exit()
+
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
-                if btn_play.clicked(mouse): return 'play'
-                if btn_quit.clicked(mouse): return 'quit'
+                if btn_play.clicked(mouse):
+                    return 'play'
+
+                if btn_shop.clicked(mouse):
+                    # Not implemented yet
+                    pass
+
+                if btn_stats.clicked(mouse):
+                    # ── Launch stats viewer ─────────────────
+                    stats_path = os.path.join(
+                        os.path.dirname(__file__),
+                        "..",
+                        "statistics_components",
+                        "stats_viewer.py"
+                    )
+                    stats_path = os.path.normpath(stats_path)
+
+                    if os.path.exists(stats_path):
+                        subprocess.Popen([sys.executable, stats_path])
+
+                if btn_quit.clicked(mouse):
+                    return 'quit'
 
         bg.draw(screen)
 
@@ -38,9 +64,10 @@ def screen_main(bg, lines):
         ]:
             pygame.draw.polygon(screen, col, pts)
 
-        # Title
+        # Title animation
         title_bob = (title_bob + 0.04) % (2*math.pi)
         bob_y = int(math.sin(title_bob) * 5)
+
         glow_text(screen, F_GIANT, "MOUSE", C['red'],  W//2 - 130, 160 + bob_y, glow_r=5)
         glow_text(screen, F_GIANT, "RACER", C['cyan'], W//2 + 140, 160 + bob_y, glow_r=5)
 
@@ -49,8 +76,11 @@ def screen_main(bg, lines):
         line_surf.fill(C['dim'])
         screen.blit(line_surf, (W//2 - 200, 225 + bob_y))
 
+        # Draw buttons
+        for b in buttons:
+            b.update(mouse)
+            b.draw(screen)
 
-        for b in buttons: b.update(mouse); b.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
 

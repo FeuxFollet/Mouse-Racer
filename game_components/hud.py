@@ -110,23 +110,5 @@ class HUD:
                          (sx + 16, sy + 14 + j*44))
             surface.blit(self.f_med.render(val,   True, Colors.TEXT_WHITE),
                          (sx + 16, sy + 30 + j*44))
-
-        # View Detailed Stats
-        detail_btn = pygame.Rect(sx + 72, sy + 230, 296, 34)
-        self.detail_btn = detail_btn
-        pygame.draw.rect(surface, Colors.HUD_BG, detail_btn, border_radius=6)
-        pygame.draw.rect(surface, Colors.TEXT_WHITE, detail_btn, 1, border_radius=6)
-        pygame.draw.rect(surface, Colors.TEXT_WHITE,
-                         (detail_btn.x, detail_btn.y + 6, 3, detail_btn.h - 12),
-                         border_radius=2)
-
-        detail_txt = self.f_sm.render("View Detailed Stats", True, Colors.TEXT_WHITE)
-        surface.blit(
-            detail_txt,
-            (detail_btn.centerx - detail_txt.get_width() // 2,
-             detail_btn.centery - detail_txt.get_height() // 2)
-        )
-
-        menu = self.f_med.render("ESC  RETURN TO MENU", True, Colors.ACCENT_RED)
-        surface.blit(menu, (Config.WIDTH//2 - menu.get_width()//2,
-                                Config.HEIGHT - 70))
+            
+            

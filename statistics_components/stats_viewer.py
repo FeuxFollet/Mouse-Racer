@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-# Theme ───────────────────────────────────────────────────────────────
+# Theme ─────────────────────────────────────────────────────────────────────
 BG        = "#0c0d10"
 BG2       = "#12141a"
 PANEL     = "#16181f"
@@ -25,12 +25,9 @@ WHITE     = "#f0f0f5"
 DIM       = "#64687a"
 STRIPE    = "#1e2028"
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-_HERE = os.path.dirname(os.path.abspath(__file__))
-STATS_DIR = os.path.join(_HERE, "statistics")
+STATS_DIR = os.path.join(os.getcwd(), "statistics")
 
-# Dark Theme ───────────────────────────────────────────────────────────────
-
+# matplotlib dark theme ─────────────────────────────────────────────────────
 plt.rcParams.update({
     "figure.facecolor":  BG2,
     "axes.facecolor":    PANEL,
@@ -47,20 +44,16 @@ plt.rcParams.update({
 })
 
 
-# CSV Loaders ───────────────────────────────────────────────────────────────
-
+# CSV loaders ───────────────────────────────────────────────────────────────
 def load_csv(path):
-
     if not os.path.exists(path):
         return []
     with open(path, newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
 
-# Stats Calculator ───────────────────────────────────────────────────────────────
-
+# Stats calculators ─────────────────────────────────────────────────────────
 def ms_fmt(ms):
-
     if ms is None: return "--:--.--"
     ms = int(ms)
     m  = ms // 60000
@@ -70,7 +63,7 @@ def ms_fmt(ms):
 
 
 def calc_lap_stats(laps_rows):
-
+    """Return dict of summary stats from lap_checkpoints.csv."""
     if not laps_rows:
         return None
 
@@ -88,7 +81,7 @@ def calc_lap_stats(laps_rows):
         if lap not in lap_finish or cp > lap_finish[lap][1]:
             lap_finish[lap] = (rt, cp, split)
 
-    # Reconstruct per-lap total time from the cumulative race_time_ms
+    # Reconstruct per-lap total time
     sorted_laps = sorted(lap_finish.keys())
     lap_times   = []
     prev_rt     = 0
@@ -138,8 +131,7 @@ def calc_speed_stats(speed_rows):
     }
 
 
-# Tkinter Helpers ───────────────────────────────────────────────────────────────
-
+# Tkinter helpers ───────────────────────────────────────────────────────────
 def styled_label(parent, text, fg=WHITE, size=12, bold=False, **kw):
     weight = "bold" if bold else "normal"
     return tk.Label(parent, text=text, fg=fg, bg=parent["bg"],
@@ -147,6 +139,11 @@ def styled_label(parent, text, fg=WHITE, size=12, bold=False, **kw):
 
 
 def build_table(parent, columns, rows, col_widths=None):
+    """
+    Build a ttk.Treeview table inside parent.
+    columns – list of header strings
+    rows    – list of tuples
+    """
     style = ttk.Style()
     style.theme_use("default")
     style.configure("Stats.Treeview",
@@ -157,7 +154,7 @@ def build_table(parent, columns, rows, col_widths=None):
                     background=BG2, foreground=CYAN,
                     relief="flat", font=("Consolas", 11, "bold"))
     style.map("Stats.Treeview",
-              background=[("selected", PANEL)],
+              background=[("selected", RED_DIM)],
               foreground=[("selected", WHITE)])
     style.map("Stats.Treeview.Heading", relief=[("active", "flat")])
 
@@ -180,8 +177,7 @@ def build_table(parent, columns, rows, col_widths=None):
     return frame
 
 
-# Chart Builders ───────────────────────────────────────────────────────────────
-
+# Chart builders ────────────────────────────────────────────────────────────
 def build_pie(parent, offroad_stats, lap_stats):
     fig, ax = plt.subplots(figsize=(4.2, 3.4))
 
@@ -245,11 +241,11 @@ def build_histogram(parent, speed_stats):
                 transform=ax.transAxes)
     else:
         speeds  = speed_stats["speeds"]
-        # Each sample = 1 second, so count directly gives seconds per speed band
+        # Each sample = 1 second
         max_spd = max(speeds) if speeds else 1
-        bins    = range(0, int(max_spd) + 15, 10)
+        bins    = range(0, int(max_spd) + 15, 10)   # 10 km/h wide bands
 
-        # Histogram
+        # Build manual histogram
         hist_s  = [0] * (len(list(bins)) - 1)
         edges   = list(bins)
         for sp in speeds:
@@ -280,8 +276,7 @@ def build_histogram(parent, speed_stats):
     return canvas.get_tk_widget()
 
 
-# Main Window ───────────────────────────────────────────────────────────────
-
+# Main window ───────────────────────────────────────────────────────────────
 class StatsViewer(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -289,13 +284,15 @@ class StatsViewer(tk.Tk):
         self.configure(bg=BG)
         self.resizable(True, True)
         self.minsize(900, 620)
-        self.protocol("WM_DELETE_WINDOW", self.destroy)
 
         self._build_header()
+        self._build_selector()
         self._build_notebook()
-        self._load()
 
-    # Header ───────────────────────────────────────────────────────────────
+        self._matches = self._scan_matches()
+        self._populate_selector()
+
+    # header ────────────────────────────────────────────────────────────────
     def _build_header(self):
         bar = tk.Frame(self, bg=BG2, height=54)
         bar.pack(fill="x")
@@ -308,10 +305,37 @@ class StatsViewer(tk.Tk):
         tk.Label(bar, text="// MATCH STATISTICS", fg=DIM, bg=BG2,
                  font=("Consolas", 13)).pack(side="left", padx=14, pady=10)
 
-        # accent line
+        # thin accent line
         tk.Frame(self, bg=RED, height=2).pack(fill="x")
 
-    # Notebook ───────────────────────────────────────────────────────────────
+    # match selector ────────────────────────────────────────────────────────
+    def _build_selector(self):
+        bar = tk.Frame(self, bg=BG2, pady=8)
+        bar.pack(fill="x", padx=0)
+
+        tk.Label(bar, text="MATCH", fg=DIM, bg=BG2,
+                 font=("Consolas", 10, "bold")).pack(side="left", padx=(16, 6))
+
+        self._match_var = tk.StringVar()
+        style = ttk.Style()
+        style.configure("Sel.TCombobox", fieldbackground=PANEL,
+                         background=PANEL, foreground=WHITE,
+                         selectbackground=RED_DIM, font=("Consolas", 10))
+
+        self._combo = ttk.Combobox(bar, textvariable=self._match_var,
+                                   style="Sel.TCombobox", state="readonly",
+                                   width=42, font=("Consolas", 10))
+        self._combo.pack(side="left", padx=4)
+        self._combo.bind("<<ComboboxSelected>>", lambda _: self._load())
+
+        tk.Button(bar, text="⟳  REFRESH", fg=CYAN, bg=PANEL,
+                  activeforeground=WHITE, activebackground=RED_DIM,
+                  relief="flat", cursor="hand2", font=("Consolas", 10),
+                  padx=10, command=self._refresh).pack(side="left", padx=8)
+
+        tk.Frame(self, bg=BORDER, height=1).pack(fill="x")
+
+    # notebook ──────────────────────────────────────────────────────────────
     def _build_notebook(self):
         style = ttk.Style()
         style.configure("Dark.TNotebook",        background=BG, borderwidth=0)
@@ -330,20 +354,56 @@ class StatsViewer(tk.Tk):
         self._nb.add(self._tab_tables, text="  SUMMARY  ")
         self._nb.add(self._tab_charts, text="  CHARTS  ")
 
-    # Load and Render ───────────────────────────────────────────────────────────────
-    def _load(self):
-        laps_rows    = load_csv(os.path.join(STATS_DIR, "lap_checkpoints.csv"))
-        offroad_rows = load_csv(os.path.join(STATS_DIR, "off_road.csv"))
-        speed_rows   = load_csv(os.path.join(STATS_DIR, "speed_time.csv"))
+        self._show_placeholder(self._tab_tables)
+        self._show_placeholder(self._tab_charts)
 
-        lap_stats     = calc_lap_stats(laps_rows)
-        offroad_stats = calc_offroad_stats(offroad_rows)
-        speed_stats   = calc_speed_stats(speed_rows)
+    def _show_placeholder(self, parent):
+        for w in parent.winfo_children():
+            w.destroy()
+        tk.Label(parent, text="Select a match above to view statistics.",
+                 fg=DIM, bg=BG, font=("Consolas", 13)).pack(expand=True)
+
+    # match scanning ────────────────────────────────────────────────────────
+    def _scan_matches(self):
+        if not os.path.isdir(STATS_DIR):
+            return []
+        entries = []
+        for name in sorted(os.listdir(STATS_DIR), reverse=True):
+            full = os.path.join(STATS_DIR, name)
+            if os.path.isdir(full):
+                entries.append((name, full))
+        return entries
+
+    def _populate_selector(self):
+        names = [m[0] for m in self._matches]
+        self._combo["values"] = names
+        if names:
+            self._combo.current(0)
+            self._load()
+
+    def _refresh(self):
+        self._matches = self._scan_matches()
+        self._populate_selector()
+
+    # Load and Render ─────────────────────────────────────────────────────────
+    def _load(self):
+        sel = self._match_var.get()
+        folder = next((p for n, p in self._matches if n == sel), None)
+        if not folder:
+            return
+
+        laps_rows    = load_csv(os.path.join(folder, "lap_checkpoints.csv"))
+        offroad_rows = load_csv(os.path.join(folder, "off_road.csv"))
+        speed_rows   = load_csv(os.path.join(folder, "speed_time.csv"))
+
+        lap_stats    = calc_lap_stats(laps_rows)
+        offroad_stats= calc_offroad_stats(offroad_rows)
+        speed_stats  = calc_speed_stats(speed_rows)
 
         self._render_tables(lap_stats, offroad_stats, speed_stats)
         self._render_charts(lap_stats, offroad_stats, speed_stats)
 
-    # Tables ───────────────────────────────────────────────────────────────
+    # Summary tab ───────────────────────────────────────────────────────────
     def _render_tables(self, lap, off, spd):
         tab = self._tab_tables
         for w in tab.winfo_children():
@@ -351,13 +411,14 @@ class StatsViewer(tk.Tk):
 
         pad = dict(padx=20, pady=10)
 
+        # Label helper ──────────────────────────────────────────────
         def section(text, color=CYAN):
             tk.Label(tab, text=text, fg=color, bg=BG,
                      font=("Consolas", 12, "bold"),
                      anchor="w").pack(fill="x", padx=20, pady=(14, 2))
             tk.Frame(tab, bg=color, height=1).pack(fill="x", padx=20)
 
-        # Lap Time table ───────────────────────────────────────────────────────────────
+        # Lap times ──────────────────────────────────────────────────────
         section("LAP TIMES", CYAN)
         if lap:
             rows = [
@@ -375,7 +436,7 @@ class StatsViewer(tk.Tk):
                     rows=rows,
                     col_widths=[260, 160]).pack(fill="x", **pad)
 
-        # Off-road Table ───────────────────────────────────────────────────────────────
+        # Off-road ───────────────────────────────────────────────────────
         section("OFF-ROAD", RED)
         if off:
             rows = [
@@ -392,7 +453,7 @@ class StatsViewer(tk.Tk):
                     rows=rows,
                     col_widths=[260, 160]).pack(fill="x", **pad)
 
-        # Speed Table ───────────────────────────────────────────────────────────────
+        # Speed ──────────────────────────────────────────────────────────
         section("SPEED", NEON)
         if spd:
             rows = [
@@ -407,17 +468,16 @@ class StatsViewer(tk.Tk):
                     rows=rows,
                     col_widths=[260, 160]).pack(fill="x", **pad)
 
-    # Charts ───────────────────────────────────────────────────────────────
-
+    # Charts tab ────────────────────────────────────────────────────────────
     def _render_charts(self, lap, off, spd):
         tab = self._tab_charts
         for w in tab.winfo_children():
             w.destroy()
 
-        # Close figures
+        # Close any matplotlib figures so memory doesn't pile up
         plt.close("all")
 
-        # Row 0: Pie and Line graph
+        # Row 0: Pie and Line
         row0 = tk.Frame(tab, bg=BG)
         row0.pack(fill="both", expand=True, padx=10, pady=(10, 4))
 
@@ -431,7 +491,7 @@ class StatsViewer(tk.Tk):
         line_frame.pack(side="left", fill="both", expand=True, padx=(5, 0))
         build_line(line_frame, spd).pack(fill="both", expand=True, padx=6, pady=6)
 
-        # Row 1: Histogram
+        # Row 1: histogram
         row1 = tk.Frame(tab, bg=BG)
         row1.pack(fill="both", expand=True, padx=10, pady=(4, 10))
 
@@ -441,8 +501,7 @@ class StatsViewer(tk.Tk):
         build_histogram(hist_frame, spd).pack(fill="both", expand=True, padx=6, pady=6)
 
 
-# ───────────────────────────────────────────────────────────────
-
+# ─────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     app = StatsViewer()
     app.mainloop()

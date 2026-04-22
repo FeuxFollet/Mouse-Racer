@@ -134,18 +134,6 @@ class Game:
                     else:
                         self.paused = not self.paused   # toggle pause in-game
                         self.race.set_paused(self.paused)
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if (self.race.finished
-                        and self.hud.detail_btn is not None
-                        and self.hud.detail_btn.collidepoint(event.pos)):
-                    _sv = os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)),
-                        "..",
-                        "statistics_components",
-                        "stats_viewer.py"
-                    )
-                    if os.path.exists(_sv):
-                        subprocess.Popen([sys.executable, _sv])
         return True
 
     def draw_cursor(self):
