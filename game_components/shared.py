@@ -1,17 +1,10 @@
-"""
-game_components/shared.py  –  MOUSE RACER
-──────────────────────────────────────────
-All module-level globals that are shared across menu components.
-Call init() once after pygame.init() (and again after re-init on game return).
-"""
-
 import pygame
 
-# ─── Shared constants ────────────────────────────────────────────────────────
+# Shared constants ────────────────────────────────────────────────────────
 W, H   = 1400, 900
 FPS    = 60
 
-# ─── Palette ─────────────────────────────────────────────────────────────────
+# Palette ─────────────────────────────────────────────────────────────────
 C = dict(
     bg        = (12,  13,  16),
     bg2       = (18,  20,  26),
@@ -30,8 +23,7 @@ C = dict(
     stripe    = ( 30,  32,  42),
 )
 
-# ─── Pygame display globals ───────────────────────────────────────────────────
-# All set to None here; populated by init() after pygame.init() is called.
+# Pygame display globals ───────────────────────────────────────────────────
 screen  = None
 clock   = None
 F_GIANT = None

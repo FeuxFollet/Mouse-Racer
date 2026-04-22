@@ -1,16 +1,8 @@
-"""
-game_components/background.py  –  MOUSE RACER
-───────────────────────────────────────────────
-Animated background effects used on all menu screens.
-    SpeedLines  –  horizontal speed-line particles
-    DiagBG      –  scrolling diagonal stripe pattern
-"""
-
 import pygame, random
 import game_components.shared as _s
 
 
-# ─── Speed-line background ────────────────────────────────────────────────────
+# Speed-line background ────────────────────────────────────────────────────
 class SpeedLines:
     def __init__(self, count=70):
         self.lines = [self._new(random.randint(0, _s.W)) for _ in range(count)]
@@ -39,7 +31,7 @@ class SpeedLines:
         surf.blit(sl, (0, 0))
 
 
-# ─── Animated diagonal stripe background ─────────────────────────────────────
+# Diagonal Background ─────────────────────────────────────
 class DiagBG:
     def __init__(self):
         self.offset = 0

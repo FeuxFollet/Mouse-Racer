@@ -56,7 +56,7 @@ class Car:
         self.prev_x = float(x)
         self.prev_y = float(y)
 
-    # ── update ────────────────────────────────────────────────────────────────
+    # update ────────────────────────────────────────────────────────────────
     def update(self, track, particles, mouse_pos=None, now=None):
         # Save previous position before moving
         self.prev_x, self.prev_y = self.x, self.y

@@ -1,13 +1,3 @@
-"""
-game_components/screens.py  –  MOUSE RACER
-────────────────────────────────────────────
-All menu screen loops and the game launcher.
-    screen_main         –  title / main menu
-    screen_car_select   –  car selection carousel
-    screen_track_select –  track selection carousel
-    launch_game         –  dynamically loads and runs the game module
-"""
-
 import pygame, math, sys, os, importlib.util
 import game_components.shared as _s
 from game_components.ui      import Button, glow_text, draw_panel

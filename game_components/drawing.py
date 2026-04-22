@@ -1,17 +1,9 @@
-"""
-game_components/drawing.py  –  MOUSE RACER
-────────────────────────────────────────────
-Standalone rendering helpers for menu previews.
-    draw_car_preview    –  inline polygon car drawn on any surface
-    draw_track_minimap  –  scaled waypoint map drawn into a rect
-"""
-
 import pygame, math
 import game_components.shared as _s
 from game_components.ui import draw_panel
 
 
-# ─── Mini car drawing ─────────────────────────────────────────────────────────
+# Car Preview ─────────────────────────────────────────────────────────
 def draw_car_preview(surf, cx, cy, scale=3.0, angle=0,
                      body_col=(210,30,30), accent_col=(255,200,0)):
     L = int(26 * scale)
@@ -49,7 +41,7 @@ def draw_car_preview(surf, cx, cy, scale=3.0, angle=0,
         pygame.draw.circle(surf, (200,40,40), (int(rx), int(ry)), int(3*scale))
 
 
-# ─── Track minimap ────────────────────────────────────────────────────────────
+# Track Preview ────────────────────────────────────────────────────────────
 def draw_track_minimap(surf, rect, waypoints, track_name="CIRCUIT 01"):
     draw_panel(surf, rect.inflate(4,4), _s.C['cyan_dim'], radius=12)
     draw_panel(surf, rect, _s.C['cyan'], radius=10)

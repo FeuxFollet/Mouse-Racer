@@ -1,18 +1,8 @@
-"""
-game_components/ui.py  –  MOUSE RACER
-───────────────────────────────────────
-Reusable UI primitives used across all menu screens.
-    lerp_color      –  smooth colour interpolation helper
-    glow_text       –  render text with a soft halo
-    draw_panel      –  filled + bordered rounded rect
-    Button          –  animated hover button widget
-"""
-
 import pygame
 import game_components.shared as _s
 
 
-# ─── Helpers ─────────────────────────────────────────────────────────────────
+# Helpers ─────────────────────────────────────────────────────────────────
 def lerp_color(a, b, t):
     return tuple(int(a[i] + (b[i]-a[i])*t) for i in range(3))
 
@@ -35,7 +25,7 @@ def draw_panel(surf, rect, border_col=None, radius=10):
     pygame.draw.rect(surf, border_col or _s.C['border'], rect, 1, border_radius=radius)
 
 
-# ─── Button ───────────────────────────────────────────────────────────────────
+# Button ───────────────────────────────────────────────────────────────────
 class Button:
     def __init__(self, label, cx, cy, w=320, h=58,
                  color_key='red', disabled=False):
