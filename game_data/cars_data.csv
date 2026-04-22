@@ -1,0 +1,9 @@
+name,sprite,accel,brake_friction,coast_friction,grass_friction,max_speed,max_speed_grass,turn_rate,length,width,scale
+Asdi 5A,5a.png,0.02,0.06,0.03,0.12,4,2.4,1.5,26,13,0.3
+Fjord Kraba,kraba.png,0.015,0.06,0.03,0.12,5,2.4,1.5,26,13,0.3
+Vtech NXS,nxs.png,0.03,0.08,0.03,0.12,5.5,2.4,2,26,13,0.28
+Pursuit 191 Turbo,191turbo.png,0.04,0.07,0.025,0.10,6.0,2.8,2.2,26,13,0.28
+Firelli F05,f05.png,0.04,0.08,0.03,0.12,5.5,2.4,2.5,26,13,0.28
+AtomMatrix F1,atommatrix.png,0.05,0.09,0.03,0.12,7,2.4,3,26,13,0.1
+McLorenza F1,mclorenza.png,0.05,0.09,0.03,0.12,7,2.4,3,26,13,0.1
+Firelli F1,firelli.png,0.05,0.09,0.03,0.12,7,2.4,3,26,13,0.1
