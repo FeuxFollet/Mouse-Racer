@@ -8,7 +8,6 @@ def lerp_color(a, b, t):
 
 
 def glow_text(surf, font, text, color, cx, cy, glow_r=3):
-    """Render text with a soft halo."""
     glow_col = tuple(max(0, c//4) for c in color)
     for dx in range(-glow_r, glow_r+1, glow_r):
         for dy in range(-glow_r, glow_r+1, glow_r):

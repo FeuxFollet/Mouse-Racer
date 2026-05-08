@@ -13,7 +13,7 @@ pygame.init()
 _s.init()   # creates screen, clock, and all fonts
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+# Main ─────────────────────────────────────────────────────────────────────
 def main():
     tracks = load_tracks()
     cars   = load_cars()

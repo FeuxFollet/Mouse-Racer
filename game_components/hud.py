@@ -111,4 +111,17 @@ class HUD:
             surface.blit(self.f_med.render(val,   True, Colors.TEXT_WHITE),
                          (sx + 16, sy + 30 + j*44))
             
+        esc_text = self.f_med.render(
+            "ESC - Return to Menu",
+            True,
+            Colors.ACCENT_RED
+        )
+
+        surface.blit(
+            esc_text,
+            (
+                Config.WIDTH // 2 - esc_text.get_width() // 2,
+                sy + 170
+            )
+        )
             

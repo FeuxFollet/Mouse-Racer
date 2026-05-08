@@ -1,9 +1,2 @@
-csv
-json
-os
-math
-random
-tkinter
-matplotlib
-pygame
-subprocess
+matplotlib>=3.10.8
+pygame>=2.6.1

@@ -5,7 +5,7 @@ from game_components.drawing import draw_track_minimap
 import subprocess
 
 
-# ─── Screens ─────────────────────────────────────────────────────────────────
+# Screens ─────────────────────────────────────────────────────────────────
 
 def screen_main(bg, lines):
     """Returns: 'play' | 'shop' | 'quit'"""
@@ -13,13 +13,12 @@ def screen_main(bg, lines):
     W = _s.W; H = _s.H; FPS = _s.FPS; C = _s.C
     F_GIANT = _s.F_GIANT; F_MED = _s.F_MED; F_SM = _s.F_SM
 
-    # ── Buttons (4 total now) ─────────────────────────────
+    # Buttons ─────────────────────────────
     btn_play  = Button("PLAY",        W//2, H//2 - 90, w=300)
-    btn_shop  = Button("SHOP",        W//2, H//2 - 20, w=300, color_key='gold')  # placeholder
-    btn_stats = Button("STATISTICS",  W//2, H//2 + 50, w=300, color_key='neon')
-    btn_quit  = Button("QUIT",        W//2, H//2 + 120, w=300, color_key='cyan')
+    btn_stats = Button("STATISTICS",  W//2, H//2 - 20, w=300, color_key='neon')
+    btn_quit  = Button("QUIT",        W//2, H//2 + 50, w=300, color_key='cyan')
 
-    buttons = [btn_play, btn_shop, btn_stats, btn_quit]
+    buttons = [btn_play, btn_stats, btn_quit]
 
     title_bob = 0.0
 
@@ -33,12 +32,8 @@ def screen_main(bg, lines):
                 if btn_play.clicked(mouse):
                     return 'play'
 
-                if btn_shop.clicked(mouse):
-                    # Not implemented yet
-                    pass
-
                 if btn_stats.clicked(mouse):
-                    # ── Launch stats viewer ─────────────────
+                    # Launch stats viewer
                     stats_path = os.path.join(
                         os.path.dirname(__file__),
                         "..",
@@ -86,18 +81,17 @@ def screen_main(bg, lines):
 
 
 def screen_car_select(bg, lines, cars):
-    """Returns: 'back' | car_data_dict"""
     screen = _s.screen; clock = _s.clock
     W = _s.W; H = _s.H; FPS = _s.FPS; C = _s.C
     F_BIG = _s.F_BIG; F_MED = _s.F_MED; F_SM = _s.F_SM; F_STAT = _s.F_STAT
 
     btn_select = Button("SELECT >",  W//2 + 120, H - 80, w=200)
     btn_back   = Button("< BACK",    W//2 - 120, H - 80, w=170, color_key='cyan')
-    # Arrow buttons sit at the left/right edges of the car preview panel (x 80–660, cy ~410)
+
     btn_left   = Button("<",  115, 410, w=56, h=56, color_key='cyan')
     btn_right  = Button(">",  625, 410, w=56, h=56, color_key='cyan')
 
-    # Default preview colours per car slot (expand as needed)
+    # Default preview colours per car slot
     PREVIEW_COLS = [
         ((210,  30,  30), (255, 200,   0)),
         (( 30,  60, 200), (150, 200, 255)),
@@ -105,8 +99,8 @@ def screen_car_select(bg, lines, cars):
         ((180,  60, 200), (255, 180, 255)),
     ]
 
-    # Build display list from the loaded car data           # fix 2: no longer
-    display_cars = []                                       # references undef var
+    # Build display list from the loaded car data
+    display_cars = []                                     
     for i, c in enumerate(cars):
         body_col, accent_col = PREVIEW_COLS[i % len(PREVIEW_COLS)]
         display_cars.append(dict(
@@ -118,7 +112,7 @@ def screen_car_select(bg, lines, cars):
                 "ACCELERATION": f"{int(c['ACCEL'] * 100)}",
                 "TURNING":      f"{c['TURN_RATE']}",
             },
-            data   = c,   # reference to actual car_data dict
+            data   = c,
         ))
     sel     = 0
     bob_t   = 0.0
@@ -131,7 +125,7 @@ def screen_car_select(bg, lines, cars):
                 pygame.quit(); sys.exit()
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
                 if btn_select.clicked(mouse):
-                    return display_cars[sel]['data']  # fix 5: return real car data
+                    return display_cars[sel]['data']
                 if btn_back.clicked(mouse):   return 'back'
                 if btn_left.clicked(mouse):   sel = (sel - 1) % len(display_cars)
                 if btn_right.clicked(mouse):  sel = (sel + 1) % len(display_cars)
@@ -148,7 +142,7 @@ def screen_car_select(bg, lines, cars):
 
         car = display_cars[sel]
 
-        # ── Left panel: car preview ──────────────────────────────────────────
+        # Left panel: car preview ──────────────────────────────────────────
         panel_r = pygame.Rect(80, 80, 580, 660)
         draw_panel(screen, panel_r, C['red_dim'], radius=12)
 
@@ -159,29 +153,29 @@ def screen_car_select(bg, lines, cars):
         car_cx = panel_r.centerx
         car_cy = panel_r.centery - 20 + int(math.sin(bob_t) * 8)
 
-        # ── Scale PNG sprite to fit a ~280×180 preview box ──────────────────
+        # Scale PNG sprite to fit a ~280×180 preview box ──────────────────
         raw_sprite = car['data']['sprite']
         _sw, _sh = raw_sprite.get_width(), raw_sprite.get_height()
         _sc = min(280 / max(_sw, 1), 180 / max(_sh, 1))
         _pw, _ph = max(1, int(_sw * _sc)), max(1, int(_sh * _sc))
         preview_sprite = pygame.transform.scale(raw_sprite, (_pw, _ph))
-        # Subtle platform shadow
+        # Platform shadow
         pygame.draw.ellipse(screen, C['bg2'],
                             (car_cx - _pw // 2 - 12, car_cy + _ph // 2 + 6,
                              _pw + 24, 18))
         screen.blit(preview_sprite, (car_cx - _pw // 2, car_cy - _ph // 2))
 
-        # Car counter  e.g. "1  /  2"
+        # Car counter
         ctr = F_SM.render(f"{sel + 1}  /  {len(display_cars)}", True, C['dim'])
         screen.blit(ctr, (panel_r.centerx - ctr.get_width() // 2,
                           panel_r.bottom - 155))
 
         # Exhaust sparks
         if spark_t % 4 == 0:
-            pass  # could add particles here
+            pass
 
 
-        # ── Right panel: stats ───────────────────────────────────────────────
+        # Right panel: stats ───────────────────────────────────────────────
         stats_r = pygame.Rect(730, 80, 580, 660)
         draw_panel(screen, stats_r, C['border'], radius=12)
 
@@ -198,7 +192,7 @@ def screen_car_select(bg, lines, cars):
             lbl = F_STAT.render(key, True, C['dim'])
             screen.blit(lbl, (stats_r.x + 26, ky - 8))
 
-            # Value (bigger + cleaner)
+            # Value
             val_s = F_BIG.render(str(val), True, C['red'])
             screen.blit(val_s, (stats_r.x + 26, ky + 20))
 
@@ -206,10 +200,9 @@ def screen_car_select(bg, lines, cars):
                              (stats_r.x + 20, ky + 80),
                              (stats_r.right - 20, ky + 80), 1)
 
-        # Selection indicator (single car: just locked-in glow box)
+        # Selection indicator
         sel_r = pygame.Rect(stats_r.x+14, stats_r.y+68+sel*90,
                              stats_r.w-28, 80)
-        # (shows selected stat block – visual only for now)
 
         # Heading
         glow_text(screen, F_MED, "CHOOSE  YOUR  CAR",
@@ -224,7 +217,6 @@ def screen_car_select(bg, lines, cars):
 
 
 def screen_track_select(bg, lines, tracks):
-    """Returns: 'back' | selected track dict"""
     screen = _s.screen; clock = _s.clock
     W = _s.W; H = _s.H; FPS = _s.FPS; C = _s.C
     F_BIG = _s.F_BIG; F_MED = _s.F_MED; F_SM = _s.F_SM; F_STAT = _s.F_STAT
@@ -274,7 +266,7 @@ def screen_track_select(bg, lines, tracks):
 
         tr = tracks[sel]
 
-        # ── Left panel: minimap ──────────────────────────────────────────────
+        # Left panel: minimap ──────────────────────────────────────────────
         map_panel = pygame.Rect(80, 80, 580, 580)
         draw_panel(screen, map_panel, C['cyan_dim'], radius=12)
         map_inner = map_panel.inflate(-20, -20)
@@ -284,12 +276,12 @@ def screen_track_select(bg, lines, tracks):
         glow_text(screen, F_BIG, tr['name'], C['cyan'],
                   map_panel.centerx, map_panel.bottom + 40)
 
-        # Track counter  e.g. "1  /  3"
+        # Track counter
         ctr = F_SM.render(f"{sel + 1}  /  {len(tracks)}", True, C['dim'])
         screen.blit(ctr, (map_panel.centerx - ctr.get_width()//2,
                           map_panel.bottom + 80))
 
-        # ── Right panel: track info ──────────────────────────────────────────
+        # Right panel: track info ──────────────────────────────────────────
         info_r = pygame.Rect(730, 80, 580, 580)
         draw_panel(screen, info_r, C['border'], radius=12)
 
@@ -328,7 +320,7 @@ def screen_track_select(bg, lines, tracks):
         clock.tick(FPS)
 
 
-# ─── Launch game ─────────────────────────────────────────────────────────────
+# Launch game ─────────────────────────────────────────────────────────────
 def launch_game(selected_car, selected_track):
     """Import and run Game from game.py sitting next to menu.py."""
     screen = _s.screen
