@@ -1,14 +1,14 @@
-![Overview1](screenshots/visualization/stats_page1.png)
+![Overview1](stats_page1.png)
 
 ## Overview Page 1
 This page contains all the data that are represented in tables.
 
-![Overview1](screenshots/visualization/stats_page2.png)
+![Overview1](stats_page2.png)
 
 ## Overview Page 2
 This page contains all the screenshots/visualization of the data that are represented in charts or graphs.
 
-![Table1](screenshots/visualization/stats_table1.png)
+![Table1](stats_table1.png)
 
 ## Lap Times Table
 
@@ -20,7 +20,7 @@ Table representing useful data regarding the lap time and time taken to reach th
 - **Fastest lap** quickest time a lap has been completed in the entire race.
 - **Slowest lap** slowest time a lap has been completed in the entire race.
 
-![Table2](screenshots/visualization/stats_table2.png)
+![Table2](stats_table2.png)
 
 ## Off-Road Table
 
@@ -31,25 +31,25 @@ Table giving informations about how often player goes off-road and how long does
 - **Shortest excursion** shortest instance of player going off-road.
 - **Longest excursion** longest instance of player going off-road.
 
-![Table3](screenshots/visualization/stats_table3.png)
+![Table3](stats_table3.png)
 
 ## Speed Table
 
 Table giving information about the top speed and the average speed of the player.
 
-![Chart1](screenshots/visualization/stats_chart1.png)
+![Chart1](stats_chart1.png)
 
 ## On-road / Off-road Chart
 
 Percentage of time the player stays on road and off road, represented in a form of pie graph.
 
-![Chart2](screenshots/visualization/stats_chart2.png)
+![Chart2](stats_chart2.png)
 
 ## Speed over time Graph
 
 A line graph of the player's current speed at a specific time, this can show player's accelerating and decelerating.
 
-![Chart3](screenshots/visualization/stats_chart3.png)
+![Chart3](stats_chart3.png)
 
 ## Time at speed Graph
 
