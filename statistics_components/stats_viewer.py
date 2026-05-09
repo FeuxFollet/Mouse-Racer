@@ -135,7 +135,7 @@ def calc_speed_stats(speed_rows):
 def styled_label(parent, text, fg=WHITE, size=12, bold=False, **kw):
     weight = "bold" if bold else "normal"
     return tk.Label(parent, text=text, fg=fg, bg=parent["bg"],
-                    font=("Consolas", size, weight), **kw)
+                    font=("consolas, menlo, couriernew, menlo, couriernew", size, weight), **kw)
 
 
 def build_table(parent, columns, rows, col_widths=None):
@@ -149,10 +149,10 @@ def build_table(parent, columns, rows, col_widths=None):
     style.configure("Stats.Treeview",
                     background=PANEL, foreground=WHITE,
                     fieldbackground=PANEL, borderwidth=0,
-                    rowheight=28, font=("Consolas", 11))
+                    rowheight=28, font=("consolas, menlo, couriernew", 11))
     style.configure("Stats.Treeview.Heading",
                     background=BG2, foreground=CYAN,
-                    relief="flat", font=("Consolas", 11, "bold"))
+                    relief="flat", font=("consolas, menlo, couriernew", 11, "bold"))
     style.map("Stats.Treeview",
               background=[("selected", RED_DIM)],
               foreground=[("selected", WHITE)])
@@ -299,11 +299,11 @@ class StatsViewer(tk.Tk):
         bar.pack_propagate(False)
 
         tk.Label(bar, text="MOUSE", fg=RED,  bg=BG2,
-                 font=("Consolas", 22, "bold")).pack(side="left", padx=(20, 0), pady=10)
+                 font=("consolas, menlo, couriernew", 22, "bold")).pack(side="left", padx=(20, 0), pady=10)
         tk.Label(bar, text="RACER", fg=CYAN, bg=BG2,
-                 font=("Consolas", 22, "bold")).pack(side="left", padx=(6, 0), pady=10)
+                 font=("consolas, menlo, couriernew", 22, "bold")).pack(side="left", padx=(6, 0), pady=10)
         tk.Label(bar, text="// MATCH STATISTICS", fg=DIM, bg=BG2,
-                 font=("Consolas", 13)).pack(side="left", padx=14, pady=10)
+                 font=("consolas, menlo, couriernew", 13)).pack(side="left", padx=14, pady=10)
 
         # thin accent line
         tk.Frame(self, bg=RED, height=2).pack(fill="x")
@@ -314,23 +314,23 @@ class StatsViewer(tk.Tk):
         bar.pack(fill="x", padx=0)
 
         tk.Label(bar, text="MATCH", fg=DIM, bg=BG2,
-                 font=("Consolas", 10, "bold")).pack(side="left", padx=(16, 6))
+                 font=("consolas, menlo, couriernew", 10, "bold")).pack(side="left", padx=(16, 6))
 
         self._match_var = tk.StringVar()
         style = ttk.Style()
         style.configure("Sel.TCombobox", fieldbackground=PANEL,
                          background=PANEL, foreground=WHITE,
-                         selectbackground=RED_DIM, font=("Consolas", 10))
+                         selectbackground=RED_DIM, font=("consolas, menlo, couriernew", 10))
 
         self._combo = ttk.Combobox(bar, textvariable=self._match_var,
                                    style="Sel.TCombobox", state="readonly",
-                                   width=42, font=("Consolas", 10))
+                                   width=42, font=("consolas, menlo, couriernew", 10))
         self._combo.pack(side="left", padx=4)
         self._combo.bind("<<ComboboxSelected>>", lambda _: self._load())
 
         tk.Button(bar, text="⟳  REFRESH", fg=CYAN, bg=PANEL,
                   activeforeground=WHITE, activebackground=RED_DIM,
-                  relief="flat", cursor="hand2", font=("Consolas", 10),
+                  relief="flat", cursor="hand2", font=("consolas, menlo, couriernew", 10),
                   padx=10, command=self._refresh).pack(side="left", padx=8)
 
         tk.Frame(self, bg=BORDER, height=1).pack(fill="x")
@@ -341,7 +341,7 @@ class StatsViewer(tk.Tk):
         style.configure("Dark.TNotebook",        background=BG, borderwidth=0)
         style.configure("Dark.TNotebook.Tab",
                         background=BG2, foreground=DIM,
-                        padding=[16, 6], font=("Consolas", 11, "bold"))
+                        padding=[16, 6], font=("consolas, menlo, couriernew", 11, "bold"))
         style.map("Dark.TNotebook.Tab",
                   background=[("selected", PANEL)],
                   foreground=[("selected", CYAN)])
@@ -361,7 +361,7 @@ class StatsViewer(tk.Tk):
         for w in parent.winfo_children():
             w.destroy()
         tk.Label(parent, text="Select a match above to view statistics.",
-                 fg=DIM, bg=BG, font=("Consolas", 13)).pack(expand=True)
+                 fg=DIM, bg=BG, font=("consolas, menlo, couriernew", 13)).pack(expand=True)
 
     # match scanning ────────────────────────────────────────────────────────
     def _scan_matches(self):
@@ -414,7 +414,7 @@ class StatsViewer(tk.Tk):
         # Label helper ──────────────────────────────────────────────
         def section(text, color=CYAN):
             tk.Label(tab, text=text, fg=color, bg=BG,
-                     font=("Consolas", 12, "bold"),
+                     font=("consolas, menlo, couriernew", 12, "bold"),
                      anchor="w").pack(fill="x", padx=20, pady=(14, 2))
             tk.Frame(tab, bg=color, height=1).pack(fill="x", padx=20)
 
