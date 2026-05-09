@@ -23,6 +23,23 @@ Provide a high-level understanding of the project.
   - **Particle effects** — Skid marks, dirt spray, smoke, and exhaust particles are generated dynamically based on the car's speed and road surface.
   - **Post-race statistics system** — Every race automatically saves lap checkpoint splits, off-road times, and a speed-over-time log to timestamped CSV files, viewable in a dedicated Tkinter + matplotlib statistics viewer.
 
+
+- **Game and Data Screenshots:**
+
+![GameScreenshot](screenshots/gameplay/game_screenshot1.png)
+
+![GameScreenshot](screenshots/gameplay/game_screenshot4.png)
+
+![GameScreenshot](screenshots/gameplay/game_screenshot6.png)
+
+![Data_Overview1](screenshots/visualization/stats_page1.png)
+
+![Data_Overview2](screenshots/visualization/stats_page2.png)
+
+- **Original Project Proposal:**
+
+[Project Proposal pdf file](docs/Mouse_Racer_ProjectProposal.pdf)
+
 ---
 
 ## 2. Concept
@@ -57,16 +74,8 @@ Provide a high-level understanding of the project.
 ---
 
 ## 3. UML Class Diagram
-Provide a UML class diagram that represents the system structure.
 
-Your diagram must include:
-- Classes  
-- Attributes  
-- Methods (optional but recommended)  
-- Relationships (e.g., association, inheritance)
-
-**Submission Requirement:**  
-- Attach the UML Class Diagram in **.pdf format**
+[UML Class Diagram PDF file](docs/Mouse_racer_UMLClassDiagram.pdf)
 
 ---
 
