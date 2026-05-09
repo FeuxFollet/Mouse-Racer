@@ -50,6 +50,56 @@ python3 main.py
 
 ---
 
+## Project File Structure
+
+```
+Mouse-Racer/
+├── main.py                        # Game entry point, RUN THE GAME HERE
+├── v2_8.py                        # Game and Race classes, master game loop
+├── requirements.txt               # Python dependencies (pygame, matplotlib, etc.)
+├── README.md                      
+├── DESCRIPTION.md                 # Project overview and UML
+├── LICENSE                        # MIT License for the project
+├── game_components/               # Core game logic package
+│   ├── __init__.py
+│   ├── car.py                     # Car class
+│   ├── track.py                   # Track class
+│   ├── race.py                    # Race class
+│   ├── hud.py                     # HUD
+│   ├── particles.py               # ParticleSystem
+│   ├── background.py              # DiagBG and SpeedLines background classes
+│   ├── screens.py                 # All menu screens
+│   ├── config.py                  # Config, Colors
+│   ├── shared.py                  # Global screen, clock, fonts
+│   ├── ui.py                      # Button, glow_text, draw_panel
+│   ├── drawing.py                 # Draw car preview and track minimap
+│   └── helpers.py
+├── game_data/                     # Assets and Data Loaders
+│   ├── car_loader.py              # Reads cars_data.csv and car sprites
+│   ├── track_loader.py            # Reads tracks_data.csv and track JSONs
+│   ├── cars_data.csv              # Car stats (speed, acceleration, turn rate, scale)
+│   ├── tracks_data.csv            # Track data (name, file, preview)
+│   ├── car_sprites/               # Car PNG sprites
+│   │   ├── car_1.png
+│   │   ├── car_2.png
+│   │   └── ...
+│   └── track_json/                # Track json waypoints and checkpoints
+│       ├── track_1.json
+│       ├── track_2.json
+│       └── ...
+├── statistics_components/         # Statistics collection and visualisation
+│   ├── __init__.py
+│   ├── stats_collector.py         # Records data
+│   └── stats_viewer.py            # Standalone Tkinter + matplotlib stats dashboard
+└── statistics/                    # Auto-generated race session data
+    └── EXAMPLE STATISTICS/        # Example data containing >100 rows
+        ├── lap_checkpoints.csv    # Gate crossing splits per car per lap
+        ├── off_road.csv           # Off-road excursion events and durations
+        └── speed_time.csv         # Speed-over-time samples
+```
+
+---
+
 ## Tutorial / Usage
 - Run main.py
 - Click play button
